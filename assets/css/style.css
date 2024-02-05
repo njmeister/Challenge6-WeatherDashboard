@@ -7,15 +7,19 @@ header {
 }
 
 aside {
-    background-color: green;
+    /* background-color: green; */
     /* display: inline; */
 }
 
 main {
-    background-color: yellow;
+    /* background-color: yellow; */
     /* display: inline; */
 }
 
 #errorMsg {
     columns: red;
+}
+
+button {
+    background-color: aqua;
 }

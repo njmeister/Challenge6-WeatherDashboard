@@ -19,6 +19,7 @@ var tempMin = [];
 var tempMax = [];
 var humidity = [];
 var wind = [];
+var imgCode = [];
 var cityState;
 let apiKey = 'bb2c3a3b4c0431fc296ddc5ca615d70c'
 
@@ -38,9 +39,16 @@ search.appendChild(history);
 cityDisplay.textContent = '';
 dateDisplay.textContent = date;
 
-for (i=0; i<5; i++) {
-  days[i].firstElementChild.innerHTML = dayjs().add(i, 'day').format('MM/DD/YY');
-}
+history.classList.add('row', 'justify-content-center', 'my-4', 'my-lg-5');
+history1.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
+history2.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
+history3.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
+history4.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
+history5.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
+
+// for (i=0; i<5; i++) {
+//   days[i].firstElementChild.innerHTML = dayjs().add(i, 'day').format('MM/DD/YY');
+// }
 
 history.addEventListener('click', function(button) {
   cityInput.value = button.target.textContent;
@@ -101,11 +109,11 @@ function logCity() {
 }
 
 function saveCity() {
-  cityState = cityInput.value.split(' ');
+  cityState = cityInput.value.split(',');
   city = cityState[0];
-  state = cityState[1];
+  state = cityState[1].trim();
 
-  if (cityState.length != 2 || state.length != 2 || city.endsWith(',') == false) {
+  if (cityState.length != 2 || state.length != 2) {
     console.log('Please enter in City, St format')
     cityError.textContent = 'Please enter in City, St format';
     cityError.classList.add('bg-light')
@@ -122,7 +130,7 @@ function saveCity() {
 }
 
 function getGeo() {
-  let geoURL = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + state + ',' + country + '&limit=5&appid=' + apiKey;
+  let geoURL = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + ',' + country + '&limit=5&appid=' + apiKey;
     fetch(geoURL)
       .then(function (response) {
         return response.json();
@@ -147,15 +155,17 @@ function getWeather() {
         .then(function (data) {
 
           for (i=0; i<5; i++) {
-            temp[i] = data.list[i].main.temp;
-            tempMin[i] = data.list[i].main.temp_min;
-            tempMax[i] = data.list[i].main.temp_max;
-            humidity[i] = data.list[i].main.humidity;
-            wind[i] = data.list[i].wind.speed;
+            temp[i] = data.list[i*8].main.temp;
+            // tempMin[i] = data.list[i*8].main.temp_min;
+            // tempMax[i] = data.list[i*8].main.temp_max;
+            humidity[i] = data.list[i*8].main.humidity;
+            wind[i] = data.list[i*8].wind.speed;
+            imgCode[i] = data.list[i*8].weather[0].icon;
           }
 
           console.log(data);
-          console.log(temp)
+          console.log(temp);
+          console.log(imgCode);
           displayWeather();
         })
 }
@@ -168,18 +178,35 @@ function displayWeather() {
   console.log('Humidity' + humidity)
   console.log('Wind Speed' + wind)
 
+  
   for (i=0; i<5; i++) {
+
+    // fetch('https://openweathermap.org/img/wn/' + imgCode[i] + '@2x.png')
+    //   .then(function (response) {
+    //     return response;
+    //   })
+    //   .then(function (data){
+    //     console.log(data)
+    //   })
+
+    days[i].firstElementChild.innerHTML = dayjs().add(i, 'day').format('MM/DD/YY');
+    days[i].classList.add('card', 'col-2', 'my-4', 'bg-dark', 'text-light', 'p-2');
+
+    symbol = document.createElement('img');
+    symbol.src = 'https://openweathermap.org/img/wn/' + imgCode[i] + '@2x.png';
+    days[i].appendChild(symbol);
+
     tempDisplay = document.createElement('p');
     tempDisplay.textContent = 'Temp: ' + temp[i] + '°F';
     days[i].appendChild(tempDisplay)
 
-    tempMaxDisplay = document.createElement('p');
-    tempMaxDisplay.textContent = 'High: ' + tempMax[i] + '°F';
-    days[i].appendChild(tempMaxDisplay)
+    // tempMaxDisplay = document.createElement('p');
+    // tempMaxDisplay.textContent = 'High: ' + tempMax[i] + '°F';
+    // days[i].appendChild(tempMaxDisplay)
 
-    tempMinDisplay = document.createElement('p');
-    tempMinDisplay.textContent = 'Low: ' + tempMin[i] + '°F';
-    days[i].appendChild(tempMinDisplay)
+    // tempMinDisplay = document.createElement('p');
+    // tempMinDisplay.textContent = 'Low: ' + tempMin[i] + '°F';
+    // days[i].appendChild(tempMinDisplay)
 
     humidityDisplay = document.createElement('p');
     humidityDisplay.textContent = 'Humidity: ' + humidity[i] + '%';
