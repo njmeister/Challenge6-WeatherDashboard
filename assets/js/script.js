@@ -5,6 +5,7 @@ let day2 = document.getElementById('2');
 let day3 = document.getElementById('3');
 let day4 = document.getElementById('4');
 let day5 = document.getElementById('5');
+let days = [day1, day2, day3, day4, day5];
 let search = document.getElementById('search');
 let dateDisplay = document.getElementById('date');
 let date = dayjs().format('dddd, DD MMMM, YYYY');
@@ -13,7 +14,11 @@ let state;
 let country;
 var lat;
 var lon;
-var temp;
+var temp = [];
+var tempMin = [];
+var tempMax = [];
+var humidity = [];
+var wind = [];
 var cityState;
 let apiKey = 'bb2c3a3b4c0431fc296ddc5ca615d70c'
 
@@ -32,6 +37,10 @@ search.appendChild(history);
 
 cityDisplay.textContent = '';
 dateDisplay.textContent = date;
+
+for (i=0; i<5; i++) {
+  days[i].firstElementChild.innerHTML = dayjs().add(i, 'day').format('MM/DD/YY');
+}
 
 history.addEventListener('click', function(button) {
   cityInput.value = button.target.textContent;
@@ -88,10 +97,6 @@ function logCity() {
     localStorage.setItem('history3', localStorage.getItem('history4'));
     localStorage.setItem('history4', localStorage.getItem('history5'));
     localStorage.setItem('history5', cityInput.value.toUpperCase());
-
-
-
-
   }
 }
 
@@ -134,22 +139,57 @@ function getGeo() {
 
 function getWeather() {
 
-    let weatherURL = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey
+    let weatherURL = 'https://api.openweathermap.org/data/2.5/forecast?lat=' + lat + '&lon=' + lon + '&appid=' + apiKey + '&units=imperial';
     fetch(weatherURL)
         .then(function (response) {
             return response.json();
         })
         .then(function (data) {
-            temp = data.list.main.temp;
-            console.log(data);
-            console.log(temp)
-            displayWeather();
+
+          for (i=0; i<5; i++) {
+            temp[i] = data.list[i].main.temp;
+            tempMin[i] = data.list[i].main.temp_min;
+            tempMax[i] = data.list[i].main.temp_max;
+            humidity[i] = data.list[i].main.humidity;
+            wind[i] = data.list[i].wind.speed;
+          }
+
+          console.log(data);
+          console.log(temp)
+          displayWeather();
         })
 }
 
 function displayWeather() {
 
-  console.log('Temp' + data.list.main.temp)
-  tempDisplay = document.createElement('p');
+  console.log('Temp' + temp)
+  console.log('TempMin' + tempMin)
+  console.log('TempMax' + tempMax)
+  console.log('Humidity' + humidity)
+  console.log('Wind Speed' + wind)
+
+  for (i=0; i<5; i++) {
+    tempDisplay = document.createElement('p');
+    tempDisplay.textContent = 'Temp: ' + temp[i] + '°F';
+    days[i].appendChild(tempDisplay)
+
+    tempMaxDisplay = document.createElement('p');
+    tempMaxDisplay.textContent = 'High: ' + tempMax[i] + '°F';
+    days[i].appendChild(tempMaxDisplay)
+
+    tempMinDisplay = document.createElement('p');
+    tempMinDisplay.textContent = 'Low: ' + tempMin[i] + '°F';
+    days[i].appendChild(tempMinDisplay)
+
+    humidityDisplay = document.createElement('p');
+    humidityDisplay.textContent = 'Humidity: ' + humidity[i] + '%';
+    days[i].appendChild(humidityDisplay)
+
+    windDisplay = document.createElement('p');
+    windDisplay.textContent = 'Wind Speed: '+ wind[i] + 'mph';
+    days[i].appendChild(windDisplay)
+  }
+
+
 
 }
