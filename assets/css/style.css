@@ -1,0 +1,21 @@
+header {
+    background-color: blue;
+    color: white;
+    /* padding: 20px; */
+    text-align: right;
+    /* width: 100%; */
+}
+
+aside {
+    background-color: green;
+    /* display: inline; */
+}
+
+main {
+    background-color: yellow;
+    /* display: inline; */
+}
+
+#errorMsg {
+    columns: red;
+}
