@@ -8,7 +8,7 @@ This is my submission for the sixth challenge in the UTA/EdX Coding Bootcamp. Th
 
 
 
-<a href="https://njmeister.github.io/Challenge5-Work-Schedule/](https://njmeister.github.io/Challenge6-WeatherDashboard/">Link</a>
+<a href="https://njmeister.github.io/Challenge6-WeatherDashboard/">Link</a>
 
 
 
