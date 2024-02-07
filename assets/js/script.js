@@ -135,7 +135,7 @@ function saveCity() {
 }
 
 function getGeo() {
-  let geoURL = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + ',' + country + '&limit=5&appid=' + apiKey;
+  let geoURL = 'https://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + ',' + country + '&limit=5&appid=' + apiKey;
     fetch(geoURL)
       .then(function (response) {
         return response.json();
