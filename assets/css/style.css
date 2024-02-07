@@ -6,16 +6,6 @@ header {
     /* width: 100%; */
 }
 
-aside {
-    /* background-color: green; */
-    /* display: inline; */
-}
-
-main {
-    /* background-color: yellow; */
-    /* display: inline; */
-}
-
 #errorMsg {
     columns: red;
 }

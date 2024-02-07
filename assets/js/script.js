@@ -8,6 +8,7 @@ let day5 = document.getElementById('5');
 let days = [day1, day2, day3, day4, day5];
 let search = document.getElementById('search');
 let dateDisplay = document.getElementById('date');
+let todayDisplay = document.getElementById('todayDisplay');
 let date = dayjs().format('dddd, DD MMMM, YYYY');
 let city;
 let state;
@@ -20,6 +21,12 @@ var tempMax = [];
 var humidity = [];
 var wind = [];
 var imgCode = [];
+var dayNum = [];
+var dayNumFix = [];
+var todayTemp;
+var todayHumidity;
+var todayWind;
+var todayImg;
 var cityState;
 let apiKey = 'bb2c3a3b4c0431fc296ddc5ca615d70c'
 
@@ -35,7 +42,6 @@ let history5 = document.createElement('button');
 
 search.appendChild(history);
 
-
 cityDisplay.textContent = '';
 dateDisplay.textContent = date;
 
@@ -46,13 +52,8 @@ history3.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
 history4.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
 history5.classList.add('mx-2', 'col-2', 'col-lg-12', 'my-lg-3');
 
-// for (i=0; i<5; i++) {
-//   days[i].firstElementChild.innerHTML = dayjs().add(i, 'day').format('MM/DD/YY');
-// }
-
 history.addEventListener('click', function(button) {
   cityInput.value = button.target.textContent;
-  console.log(cityInput.value)
   saveCity();
 })
 
@@ -111,22 +112,26 @@ function logCity() {
 function saveCity() {
   cityState = cityInput.value.split(',');
   city = cityState[0];
-  state = cityState[1].trim();
+  state = cityState[1];
 
-  if (cityState.length != 2 || state.length != 2) {
-    console.log('Please enter in City, St format')
+  cityError.classList.add('bg-light')
+  cityError.classList.add('rounded')
+
+  if (cityState.length != 2 || state.trim().length != 2) {
     cityError.textContent = 'Please enter in City, St format';
-    cityError.classList.add('bg-light')
-    cityError.classList.add('rounded')
-    return
   } else {
-    console.log(cityInput.value);
-    cityDisplay.textContent = cityInput.value.toUpperCase();
-    console.log(city);
-    console.log(state);
-    logCity();
-    getGeo();
-  }
+    try {
+      getGeo();
+
+    } 
+    catch(TypeError) {
+      cityError.textContent = 'City Not Recognized'
+    }
+      cityDisplay.textContent = cityInput.value.toUpperCase();
+      logCity();
+}
+
+
 }
 
 function getGeo() {
@@ -136,11 +141,8 @@ function getGeo() {
         return response.json();
       })
       .then(function (data) {
-        console.log(data)
         lat = data[0].lat;
         lon = data[0].lon;
-        console.log(lat + ', ' + lon)
-        
         getWeather();
         });
 }
@@ -154,42 +156,52 @@ function getWeather() {
         })
         .then(function (data) {
 
-          for (i=0; i<5; i++) {
-            temp[i] = data.list[i*8].main.temp;
-            // tempMin[i] = data.list[i*8].main.temp_min;
-            // tempMax[i] = data.list[i*8].main.temp_max;
-            humidity[i] = data.list[i*8].main.humidity;
-            wind[i] = data.list[i*8].wind.speed;
-            imgCode[i] = data.list[i*8].weather[0].icon;
+          for (i=1; i<=5; i++) {
+            temp[i-1] = data.list[(i*8)-1].main.temp;
+            humidity[i-1] = data.list[(i*8)-1].main.humidity;
+            wind[i-1] = data.list[(i*8)-1].wind.speed;
+            imgCode[i-1] = data.list[(i*8)-1].weather[0].icon;
+            dayNum[i-1] = data.list[(i*8)-1].dt_txt;
           }
 
-          console.log(data);
-          console.log(temp);
-          console.log(imgCode);
+          todayTemp = data.list[0].main.temp;
+          todayHumidity = data.list[0].main.humidity;
+          todayWind = data.list[0].wind.speed;
+          todayImg = data.list[0].weather[0].icon;
           displayWeather();
         })
 }
 
 function displayWeather() {
 
-  console.log('Temp' + temp)
-  console.log('TempMin' + tempMin)
-  console.log('TempMax' + tempMax)
-  console.log('Humidity' + humidity)
-  console.log('Wind Speed' + wind)
+  todayTempDisplay = document.createElement('h4');
+  todayHumidityDisplay = document.createElement('h4');
+  todayWindDisplay = document.createElement('h4');
+  todayImgDisplay = document.createElement('img');
 
-  
+  todayTempDisplay.textContent = 'Temp: ' + todayTemp + '°F';
+  todayHumidityDisplay.textContent = 'Humidity: ' + todayHumidity + '%';
+  todayWindDisplay.textContent = 'Wind Speed: '+ todayWind + 'mph';
+
+  todayTempDisplay.classList.add('col-4');
+  todayHumidityDisplay.classList.add('col-4');
+  todayWindDisplay.classList.add('col-4');
+
+
+  todayImgDisplay.src = 'https://openweathermap.org/img/wn/' + todayImg + '@2x.png';
+  todayDisplay.appendChild(todayImgDisplay);
+  todayImgDisplay.classList.add('col-2');
+
+  todayDisplay.classList.add('border', 'border-5');
+
+  todayDisplay.appendChild(todayTempDisplay);
+  todayDisplay.appendChild(todayHumidityDisplay);
+  todayDisplay.appendChild(todayWindDisplay);
+
   for (i=0; i<5; i++) {
 
-    // fetch('https://openweathermap.org/img/wn/' + imgCode[i] + '@2x.png')
-    //   .then(function (response) {
-    //     return response;
-    //   })
-    //   .then(function (data){
-    //     console.log(data)
-    //   })
-
-    days[i].firstElementChild.innerHTML = dayjs().add(i, 'day').format('MM/DD/YY');
+    dayNumFix[i] = dayNum[i].slice(0,10).replace(/-/g,'/');
+    days[i].firstElementChild.innerHTML = dayNumFix[i];
     days[i].classList.add('card', 'col-2', 'my-4', 'bg-dark', 'text-light', 'p-2');
 
     symbol = document.createElement('img');
@@ -200,14 +212,6 @@ function displayWeather() {
     tempDisplay.textContent = 'Temp: ' + temp[i] + '°F';
     days[i].appendChild(tempDisplay)
 
-    // tempMaxDisplay = document.createElement('p');
-    // tempMaxDisplay.textContent = 'High: ' + tempMax[i] + '°F';
-    // days[i].appendChild(tempMaxDisplay)
-
-    // tempMinDisplay = document.createElement('p');
-    // tempMinDisplay.textContent = 'Low: ' + tempMin[i] + '°F';
-    // days[i].appendChild(tempMinDisplay)
-
     humidityDisplay = document.createElement('p');
     humidityDisplay.textContent = 'Humidity: ' + humidity[i] + '%';
     days[i].appendChild(humidityDisplay)
@@ -216,7 +220,4 @@ function displayWeather() {
     windDisplay.textContent = 'Wind Speed: '+ wind[i] + 'mph';
     days[i].appendChild(windDisplay)
   }
-
-
-
 }
