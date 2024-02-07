@@ -4,11 +4,11 @@
 
 This is my submission for the sixth challenge in the UTA/EdX Coding Bootcamp. The goal of this challenge was to create an interactive weather dashboard using a server-side API.
 
-<img src="./Assets/Images/Screenshot.png"/>
+<img src="./assets/images/Screenshot.png"/>
 
 
 
-<a href="https://njmeister.github.io/Challenge5-Work-Schedule/">Link</a>
+<a href="https://njmeister.github.io/Challenge5-Work-Schedule/](https://njmeister.github.io/Challenge6-WeatherDashboard/">Link</a>
 
 
 
